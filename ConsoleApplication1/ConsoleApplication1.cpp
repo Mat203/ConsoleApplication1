@@ -37,57 +37,66 @@ void delete_element(Node*& head, const char* val)
     }
 }
 
+void append_text(Node*& head, const char* text)
+{
+    if (head == nullptr)
+    {
+        head = new Node();
+        strcpy_s(head->value, text);
+        head->next = nullptr;
+    }
+    else
+    {
+        Node* current = head;
+        while (current->next != nullptr)
+        {
+            current = current->next;
+        }
+ 
+        strcat_s(current->value, text);
+    }
+}
+
+
 int main()
 {
-    Node* head = new Node();
-    strcpy_s(head->value, "Hello");
+    printf("You can use next commands: \n");
+    printf("1 - Text append\n");
+    printf("2 - New line start\n");
+    printf("3 - Save the text to the file\n");
+    printf("4 - Load the text from the file\n");
+    printf("5 - Current text print\n");
+    printf("6 - Insert the text by line and symbol index\n");
+    printf("7 - Text search\n");
+    printf("8 - Text clear\n");
 
-    Node* current = new Node();
-    strcpy_s(current->value, "World");
-    head->next = current;
+    Node* head = nullptr;
 
-    current->next = new Node();
-    strcpy_s(current->next->value, "This");
-
-    current = current->next;
-    current->next = new Node();
-    strcpy_s(current->next->value, "Is");
-
-    current = current->next;
-    current->next = new Node();
-    strcpy_s(current->next->value, "A");
-
-    current = current->next;
-    current->next = new Node();
-    strcpy_s(current->next->value, "Linked");
-
-    current = current->next;
-    current->next = new Node();
-    strcpy_s(current->next->value, "List");
-
-    current->next->next = nullptr;
-
-    Node* print_current = head;
-    while (print_current != nullptr)
+    while (true)
     {
-        printf("%s ", print_current->value);
-        print_current = print_current->next;
-    }
-    printf("\n");
+        int command;
+        scanf_s("%d", &command);
 
-    delete_element(head, "This");
+        if (command == 1)
+        {
+            char text[80];
+            printf("Enter text to append: ");
+            scanf_s("%s", text, sizeof(text));
+            append_text(head, text);
 
-    print_current = head;
-    while (print_current != nullptr)
-    {
-        printf("%s ", print_current->value);
-        print_current = print_current->next;
+            Node* print_current = head;
+            while (print_current != nullptr)
+            {
+                printf("%s ", print_current->value);
+                print_current = print_current->next;
+            }
+            printf("\n");
+        }
     }
-    printf("\n");
 
     while (head != nullptr)
     {
-        current = head;
+        Node* current = head;
         head = head->next;
         delete current;
     }
