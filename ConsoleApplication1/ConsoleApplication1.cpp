@@ -1,55 +1,95 @@
 #include <stdio.h>
-#include <stdlib.h>
 #include <string.h>
 
-int main() {
-    int command;
-    char** textArray = NULL;
-    int numRows = 0;
-    int currentRow = 0;
-    const int maxLineLength = 100;
+struct Node
+{
+    char value[80]; 
+    Node* next;
+};
 
-    printf("You can use next commands: \n");
-    printf("1 - Text append\n");
-    printf("2 - New line start\n");
-    printf("3 - Save the text to the file\n");
-    printf("4 - Load the text from the file\n");
-    printf("5 - Current text print\n");
-    printf("6 - Insert the text by line and symbol index\n");
-    printf("7 - Text search\n");
-    printf("8 - Text clear\n");
+void delete_element(Node*& head, const char* val)
+{
+    Node* current = head;
+    Node* previous = nullptr;
 
-    while (1)
+    while (current != nullptr)
     {
-        printf("Enter the number of command: ");
-        scanf_s("%d", &command);
-        getchar();
-
-        if (command == 1)
+        if (strcmp(current->value, val) == 0)
         {
-            char input[maxLineLength];
-            printf("Enter the text: ");
-            scanf_s("%s", input, sizeof(input));
-
-            if (currentRow == 0) {
-                textArray = (char**)realloc(textArray, (currentRow + 1) * sizeof(char*));
-                textArray[currentRow] = (char*)malloc((strlen(input) + 1) * sizeof(char));
-                strcpy_s(textArray[currentRow], strlen(input) + 1, input);
-                currentRow++;
-            }
-            else {
-                textArray[currentRow - 1] = (char*)realloc(textArray[currentRow - 1], (strlen(textArray[currentRow - 1]) + strlen(input) + 1) * sizeof(char));
-                strcat_s(textArray[currentRow - 1], strlen(textArray[currentRow - 1]) + strlen(input) + 1, input);
-            }
-        }
-
-        else if (command == 5)
-        {
-            for (int i = 0; i < currentRow; i++)
+            if (previous == nullptr)
             {
-                printf("%s\n", textArray[i]);
+                head = current->next;
+                delete current;
+                current = head;
+            }
+            else
+            {
+                previous->next = current->next;
+                delete current;
+                current = previous->next;
             }
         }
+        else
+        {
+            previous = current;
+            current = current->next;
+        }
+    }
+}
+
+int main()
+{
+    Node* head = new Node();
+    strcpy_s(head->value, "Hello");
+
+    Node* current = new Node();
+    strcpy_s(current->value, "World");
+    head->next = current;
+
+    current->next = new Node();
+    strcpy_s(current->next->value, "This");
+
+    current = current->next;
+    current->next = new Node();
+    strcpy_s(current->next->value, "Is");
+
+    current = current->next;
+    current->next = new Node();
+    strcpy_s(current->next->value, "A");
+
+    current = current->next;
+    current->next = new Node();
+    strcpy_s(current->next->value, "Linked");
+
+    current = current->next;
+    current->next = new Node();
+    strcpy_s(current->next->value, "List");
+
+    current->next->next = nullptr;
+
+    Node* print_current = head;
+    while (print_current != nullptr)
+    {
+        printf("%s ", print_current->value);
+        print_current = print_current->next;
+    }
+    printf("\n");
+
+    delete_element(head, "This");
+
+    print_current = head;
+    while (print_current != nullptr)
+    {
+        printf("%s ", print_current->value);
+        print_current = print_current->next;
+    }
+    printf("\n");
+
+    while (head != nullptr)
+    {
+        current = head;
+        head = head->next;
+        delete current;
     }
 
     return 0;
