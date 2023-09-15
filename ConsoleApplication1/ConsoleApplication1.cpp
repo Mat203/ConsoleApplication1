@@ -1,3 +1,4 @@
+#define _CRT_SECURE_NO_WARNINGS
 #include <stdio.h>
 #include <string.h>
 
@@ -37,6 +38,26 @@ void delete_element(Node*& head, const char* val)
     }
 }
 
+void new_line(Node*& head)
+{
+    Node* new_node = new Node();
+    new_node->next = nullptr;
+
+    if (head == nullptr)
+    {
+        head = new_node;
+    }
+    else
+    {
+        Node* current = head;
+        while (current->next != nullptr)
+        {
+            current = current->next;
+        }
+        current->next = new_node;
+    }
+}
+
 void append_text(Node*& head, const char* text)
 {
     if (head == nullptr)
@@ -55,6 +76,20 @@ void append_text(Node*& head, const char* text)
  
         strcat_s(current->value, text);
     }
+}
+void save_text_to_file(Node* head, const char* filename)
+{
+    FILE* file;
+    file  = fopen(filename, "w"); 
+
+    Node* current = head;
+    while (current != NULL)
+    {
+        fprintf(file, "%s\n", current->value); 
+        current = current->next;
+    }
+
+    fclose(file); 
 }
 
 
@@ -75,6 +110,7 @@ int main()
     while (true)
     {
         int command;
+        printf("Write your command:");
         scanf_s("%d", &command);
 
         if (command == 1)
@@ -87,10 +123,24 @@ int main()
             Node* print_current = head;
             while (print_current != nullptr)
             {
-                printf("%s ", print_current->value);
+                printf("%s \n", print_current->value);
                 print_current = print_current->next;
             }
             printf("\n");
+        }
+
+        if (command == 2)
+        {
+            printf("Hew line has started\n");
+            new_line(head);
+        }
+        if (command == 3)
+        {
+            char filename[80];
+            printf("Enter the file name for saving: ");
+            scanf_s("%s", filename, sizeof(filename));
+            save_text_to_file(head, filename);
+            printf("Text has been saved successfully");
         }
     }
 
