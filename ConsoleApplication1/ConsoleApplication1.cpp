@@ -155,6 +155,42 @@ void insert_text(Node*& head, int line, int index, const char* text)
     strcpy(current->value, new_value);
 }
 
+void search_text(Node* head, const char* substr) {
+    int line_number = 0;
+    int check = 0;
+
+    Node* current = head;
+    while (current != nullptr) {
+        const char* line = current->value;
+        int line_len = strlen(line);
+        int substr_len = strlen(substr);
+
+        for (int i = 0; i <= line_len - substr_len; i++) {
+            int j;
+            for (j = 0; j < substr_len; j++) {
+                if (line[i + j] != substr[j]) {
+                    break; 
+                }
+            }
+
+            if (j == substr_len) {
+                printf("Text is present in this position: Line %d, Index %d\n", line_number, i);
+                check = 1;
+            }
+        }
+
+        line_number++;
+        current = current->next;
+    }
+
+    if (check == 0)
+    {
+        printf("There is no such text in the lines\n");
+    }
+}
+
+
+
 
 
 int main()
@@ -167,7 +203,6 @@ int main()
     printf("5 - Current text print\n");
     printf("6 - Insert the text by line and symbol index\n");
     printf("7 - Text search\n");
-    printf("8 - Text clear\n");
 
     Node* head = nullptr;
 
@@ -183,14 +218,6 @@ int main()
             printf("Enter text to append: ");
             scanf_s("%s", text, sizeof(text));
             append_text(head, text);
-
-            Node* print_current = head;
-            while (print_current != nullptr)
-            {
-                printf("%s \n", print_current->value);
-                print_current = print_current->next;
-            }
-            printf("\n");
         }
 
         if (command == 2)
@@ -208,6 +235,18 @@ int main()
             printf("Text has been saved successfully");
         }
 
+
+        if (command == 5)
+        {
+            Node* current = head;
+
+            while (current != nullptr)
+            {
+                printf("%s\n", current->value);
+                current = current->next;
+            }
+        }
+
         if (command == 6)
         {
             int line, index;
@@ -220,6 +259,14 @@ int main()
 
             insert_text(head, line, index, text);
         }
+
+        if (command == 7) {
+            char substring[80];
+            printf("Enter text to search: ");
+            scanf_s("%s", substring, sizeof(substring));
+            search_text(head, substring);
+        }
+
     }
 
     while (head != nullptr)
