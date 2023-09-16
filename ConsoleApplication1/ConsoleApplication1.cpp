@@ -77,6 +77,7 @@ void append_text(Node*& head, const char* text)
         strcat_s(current->value, text);
     }
 }
+
 void save_text_to_file(Node* head, const char* filename)
 {
     FILE* file;
@@ -91,6 +92,69 @@ void save_text_to_file(Node* head, const char* filename)
 
     fclose(file); 
 }
+
+void insert_text(Node*& head, int line, int index, const char* text)
+{
+    if (line < 0 || index < 0)
+    {
+        printf("Invalid line or index\n");
+        return;
+    }
+
+    Node* current = head;
+    int current_line = 0;
+
+    while (current != nullptr && current_line < line)
+    {
+        current = current->next;
+        current_line++;
+    }
+
+    if (current == nullptr)
+    {
+        printf("Line not found\n");
+        return;
+    }
+
+    int length = strlen(current->value);
+
+    if (index > length)
+    {
+        printf("Index out of range\n");
+        return;
+    }
+
+    char new_value[80];
+    int new_index = 0;
+    int old_index = 0;
+
+    while (old_index < index)
+    {
+        new_value[new_index] = current->value[new_index];
+        new_index++;
+        old_index++;
+    }
+
+    int text_index = 0;
+    while (text[text_index] != '\0')
+    {
+        new_value[new_index] = text[text_index];
+        new_index++;
+        text_index++;
+    }
+
+    while (old_index < length)
+    {
+        new_value[new_index] = current->value[old_index];
+        new_index++;
+        old_index++;
+    }
+
+    new_value[new_index] = '\0';
+
+    strcpy(current->value, new_value);
+}
+
 
 
 int main()
@@ -134,6 +198,7 @@ int main()
             printf("Hew line has started\n");
             new_line(head);
         }
+
         if (command == 3)
         {
             char filename[80];
@@ -141,6 +206,19 @@ int main()
             scanf_s("%s", filename, sizeof(filename));
             save_text_to_file(head, filename);
             printf("Text has been saved successfully");
+        }
+
+        if (command == 6)
+        {
+            int line, index;
+            char text[80];
+
+            printf("Enter the number of line and index: ");
+            scanf_s("%d %d", &line, &index);
+            printf("Enter the text to insert: ");
+            scanf_s("%s", text, sizeof(text));
+
+            insert_text(head, line, index, text);
         }
     }
 
