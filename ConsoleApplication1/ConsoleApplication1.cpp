@@ -8,36 +8,6 @@ struct Node
     Node* next;
 };
 
-void delete_element(Node*& head, const char* val)
-{
-    Node* current = head;
-    Node* previous = nullptr;
-
-    while (current != nullptr)
-    {
-        if (strcmp(current->value, val) == 0)
-        {
-            if (previous == nullptr)
-            {
-                head = current->next;
-                delete current;
-                current = head;
-            }
-            else
-            {
-                previous->next = current->next;
-                delete current;
-                current = previous->next;
-            }
-        }
-        else
-        {
-            previous = current;
-            current = current->next;
-        }
-    }
-}
-
 void new_line(Node*& head)
 {
     Node* new_node = new Node();
@@ -189,8 +159,46 @@ void search_text(Node* head, const char* substr) {
     }
 }
 
+void load_text_from_file(Node*& head, const char* filename)
+{
+    FILE* file;
+    file = fopen(filename, "r");
 
+    if (file == NULL)
+    {
+        printf("Error opening file\n");
+        return;
+    }
 
+    while (head != nullptr)
+    {
+        Node* current = head;
+        head = head->next;
+        delete current;
+    }
+
+    char line[80];
+    new_line(head);
+    Node* current = head;
+    while (fgets(line, 80, file))
+    {
+        for (int i = 0; i < sizeof(line); i++)
+        {
+            if (line[i] == '\n')
+            {
+                line[i] = '\0';
+                break;
+            }
+        }
+
+        strcpy_s(current->value, line);
+
+        new_line(current);
+        current = current->next;
+    }
+
+    fclose(file);
+}
 
 
 int main()
@@ -203,6 +211,7 @@ int main()
     printf("5 - Current text print\n");
     printf("6 - Insert the text by line and symbol index\n");
     printf("7 - Text search\n");
+    printf("8 - Console clearing\n");
 
     Node* head = nullptr;
 
@@ -232,9 +241,17 @@ int main()
             printf("Enter the file name for saving: ");
             scanf_s("%s", filename, sizeof(filename));
             save_text_to_file(head, filename);
-            printf("Text has been saved successfully");
+            printf("Text has been saved successfully\n");
         }
 
+        if (command == 4)
+        {
+            char filename[80];
+            printf("Enter the file name for loading: ");
+            scanf_s("%s", filename, sizeof(filename));
+            load_text_from_file(head, filename);
+            printf("Text has been loaded successfully\n");
+        }
 
         if (command == 5)
         {
@@ -265,6 +282,10 @@ int main()
             printf("Enter text to search: ");
             scanf_s("%s", substring, sizeof(substring));
             search_text(head, substring);
+        }
+
+        if (command == 8) {
+            printf("\033[H\033[J");
         }
 
     }
